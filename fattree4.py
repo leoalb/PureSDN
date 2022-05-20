@@ -59,7 +59,7 @@ class Fattree(Topo):
 		"""
 			Create switches.
 		"""
-		for i in xrange(1, number+1):
+		for i in range(1, number+1):
 			PREFIX = str(level) + "00"
 			if i >= 10:
 				PREFIX = str(level) + "0"
@@ -78,7 +78,7 @@ class Fattree(Topo):
 		"""
 			Create hosts.
 		"""
-		for i in xrange(1, NUMBER+1):
+		for i in range(1, NUMBER+1):
 			if i >= 100:
 				PREFIX = "h"
 			elif i >= 10:
@@ -93,25 +93,25 @@ class Fattree(Topo):
 		"""
 		# Core to Agg
 		end = self.pod/2
-		for x in xrange(0, self.iAggLayerSwitch, end):
-			for i in xrange(0, end):
-				for j in xrange(0, end):
+		for x in range(0, self.iAggLayerSwitch, end):
+			for i in range(0, end):
+				for j in range(0, end):
 					self.addLink(
 						self.CoreSwitchList[i*end+j],
 						self.AggSwitchList[x+i],
 						bw=bw_c2a, max_queue_size=1000)   # use_htb=False
 
 		# Agg to Edge
-		for x in xrange(0, self.iAggLayerSwitch, end):
-			for i in xrange(0, end):
-				for j in xrange(0, end):
+		for x in range(0, self.iAggLayerSwitch, end):
+			for i in range(0, end):
+				for j in range(0, end):
 					self.addLink(
 						self.AggSwitchList[x+i], self.EdgeSwitchList[x+j],
 						bw=bw_a2e, max_queue_size=1000)   # use_htb=False
 
 		# Edge to Host
-		for x in xrange(0, self.iEdgeLayerSwitch):
-			for i in xrange(0, self.density):
+		for x in range(0, self.iEdgeLayerSwitch):
+			for i in range(0, self.density):
 				self.addLink(
 					self.EdgeSwitchList[x],
 					self.HostList[self.density * x + i],
@@ -133,7 +133,7 @@ class Fattree(Topo):
 
 def set_host_ip(net, topo):
 	hostlist = []
-	for k in xrange(len(topo.HostList)):
+	for k in range(len(topo.HostList)):
 		hostlist.append(net.get(topo.HostList[k]))
 	i = 1
 	j = 1
@@ -181,7 +181,7 @@ def install_proactive(net, topo):
 		num = int(sw[-2:])
 
 		# Downstream.
-		for i in xrange(1, topo.density+1):
+		for i in range(1, topo.density+1):
 			cmd = "ovs-ofctl add-flow %s -O OpenFlow13 \
 				'table=0,idle_timeout=0,hard_timeout=0,priority=10,arp, \
 				nw_dst=10.%d.0.%d,actions=output:%d'" % (sw, num, i, topo.pod/2+i)
@@ -213,7 +213,7 @@ def install_proactive(net, topo):
 	for sw in topo.CoreSwitchList:
 		j = 1
 		k = 1
-		for i in xrange(1, len(topo.EdgeSwitchList)+1):
+		for i in range(1, len(topo.EdgeSwitchList)+1):
 			cmd = "ovs-ofctl add-flow %s -O OpenFlow13 \
 				'table=0,idle_timeout=0,hard_timeout=0,priority=10,arp, \
 				nw_dst=10.%d.0.0/16, actions=output:%d'" % (sw, i, j)
