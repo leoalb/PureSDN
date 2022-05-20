@@ -1,4 +1,4 @@
-## PureSDN
+## PureSDN3
 
 PureSDN is a SDN-based traffic schduling application. Except the routing paths for hosts under the same switch, routing paths are calculated and installed completely by the Ryu controller.
 It includes a set of Ryu applications collecting basic network information, such as topology and free bandwidth of links. PureSDN can achieve shortest path forwarding based on HOP or BANDWIDTH.
@@ -24,8 +24,8 @@ We make use of networkx's data structure to store topology. Meanwhile, we also u
 
 The following softwares should have been installed in your machine.
 * Mininet: git clone git://github.com/mininet/mininet; mininet/util/install.sh -a
-* Ryu: git clone git://github.com/osrg/ryu.git; cd ryu; pip install .
-* Networkx: pip install networkx
+* Ryu: git clone git://github.com/osrg/ryu.git; cd ryu; pip3 install .
+* Networkx: pip3 install networkx
 
 
 ### Download
