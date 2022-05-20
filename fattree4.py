@@ -39,11 +39,11 @@ class Fattree(Topo):
 
 	def __init__(self, k, density):
 		self.pod = k
-		self.density = density
-		self.iCoreLayerSwitch = (k/2)**2
-		self.iAggLayerSwitch = k*k/2
-		self.iEdgeLayerSwitch = k*k/2
-		self.iHost = self.iEdgeLayerSwitch * density
+		self.density = int(density)
+		self.iCoreLayerSwitch = int((k/2)**2)
+		self.iAggLayerSwitch = int(k*k/2)
+		self.iEdgeLayerSwitch = int(k*k/2)
+		self.iHost = int(self.iEdgeLayerSwitch * density)
 
 		# Init Topo
 		Topo.__init__(self)
@@ -59,7 +59,7 @@ class Fattree(Topo):
 		"""
 			Create switches.
 		"""
-		for i in range(1, number+1):
+		for i in range(1, int(number+1)):
 			PREFIX = str(level) + "00"
 			if i >= 10:
 				PREFIX = str(level) + "0"
@@ -78,7 +78,7 @@ class Fattree(Topo):
 		"""
 			Create hosts.
 		"""
-		for i in range(1, NUMBER+1):
+		for i in range(1, int(NUMBER+1)):
 			if i >= 100:
 				PREFIX = "h"
 			elif i >= 10:
@@ -92,7 +92,7 @@ class Fattree(Topo):
 			Add network links.
 		"""
 		# Core to Agg
-		end = self.pod/2
+		end = int(self.pod/2)
 		for x in range(0, self.iAggLayerSwitch, end):
 			for i in range(0, end):
 				for j in range(0, end):
@@ -247,7 +247,7 @@ def pingTest(net):
 	"""
 	net.pingAll()
 
-def createTopo(pod, density, ip="192.168.56.101", port=6653, bw_c2a=10, bw_a2e=10, bw_e2h=10):
+def createTopo(pod, density, ip="192.168.56.104", port=6653, bw_c2a=10, bw_a2e=10, bw_e2h=10):
 	"""
 		Create network topology and run the Mininet.
 	"""

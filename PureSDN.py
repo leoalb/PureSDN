@@ -314,7 +314,7 @@ class ShortestForwarding(app_manager.RyuApp):
 		out_port = first_dp.ofproto.OFPP_LOCAL
 
 		# Install flow entry for intermediate datapaths.
-		for i in range(1, (len(path) - 1) / 2):
+		for i in range(1, int((len(path) - 1) / 2)):
 			port = self.get_port_pair_from_link(link_to_port, path[i-1], path[i])
 			port_next = self.get_port_pair_from_link(link_to_port, path[i], path[i+1])
 			if port and port_next:

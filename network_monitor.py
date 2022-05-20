@@ -238,9 +238,9 @@ class NetworkMonitor(app_manager.RyuApp):
 					   ofproto.OFPPR_MODIFY: "modified", }
 
 		if reason in reason_dict:
-			print "switch%d: port %s %s" % (dpid, reason_dict[reason], port_no)
+			print ("switch%d: port %s %s" % (dpid, reason_dict[reason], port_no))
 		else:
-			print "switch%d: Illeagal port state %s %s" % (dpid, port_no, reason)
+			print ("switch%d: Illeagal port state %s %s" % (dpid, port_no, reason))
 
 	def _request_stats(self, datapath):
 		"""
@@ -264,7 +264,7 @@ class NetworkMonitor(app_manager.RyuApp):
 		_len = len(path)
 		if _len > 1:
 			minimal_band_width = min_bw
-			for i in xrange(_len-1):
+			for i in range(_len-1):
 				pre, curr = path[i], path[i+1]
 				if 'bandwidth' in graph[pre][curr]:
 					bw = graph[pre][curr]['bandwidth']
