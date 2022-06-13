@@ -23,6 +23,7 @@ from mininet.log import setLogLevel
 from mininet.link import Link, Intf, TCLink
 from mininet.topo import Topo
 from mininet.util import dumpNodeConnections
+from time import sleep
 
 import logging
 import os
@@ -256,37 +257,37 @@ def run_bootstrap(net):
 
 def run_node_failure(net):
 	print(f"running node_failure")
-	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h2'), allLinks = True)
-	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h3'), allLinks = True)
-	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'), allLinks = True)
-	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_3'), allLinks = True)
-	print("deleted r3_0_0")
+	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('h001'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('h002'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2002'), allLinks = True)
+	print("deleted 3001")
 
 def run_node_recovery(net):
 	print(f"running node_recovery")
-	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h2'))
-	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h3'))
-	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'))
-	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_3'))
-	print("r3_0_0 up")
+	net.addLink (net.getNodeByName('3001'), net.getNodeByName('h001'))
+	net.addLink (net.getNodeByName('3001'), net.getNodeByName('h002'))
+	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
+	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2002'))
+	print("3001 up")
 
 def run_link_failure(net):
 	print(f"running link_failure")	
-	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 
 def run_link_recovery(net):	
 	print(f"running link_recovery")	
-	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'), allLinks = True)
-	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'))
+	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
+	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
 
 def run_partitioned_fabric(net):
 	print(f"running partitioned_fabric")	
-	net.delLinkBetween (net.getNodeByName('r1_0'), net.getNodeByName('r2_0_2'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('1001'), net.getNodeByName('2001'), allLinks = True)
 
 def run_partitioned_fabric_plane(net):	
 	print(f"running partitioned_fabric_plane")	
-	net.delLinkBetween (net.getNodeByName('r1_0'), net.getNodeByName('r2_0_2'), allLinks = True)
-	net.delLinkBetween (net.getNodeByName('r1_1'), net.getNodeByName('r2_0_2'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('1001'), net.getNodeByName('2001'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('1002'), net.getNodeByName('2001'), allLinks = True)
 
 def createTopo(pod, density, ip=CONTROLLER_IP, port=CONTROLLER_PORT, bw_c2a=10, bw_a2e=10, bw_e2h=10):
 	"""
@@ -315,6 +316,7 @@ def createTopo(pod, density, ip=CONTROLLER_IP, port=CONTROLLER_PORT, bw_c2a=10, 
 	# dumpNodeConnections(net.hosts)
 	# pingTest(net)
 	# iperfTest(net, topo)
+	sleep(10)
 	run_bootstrap(net)
 	#uncomments the tests you wanna run
 	#run_node_failure(net)
