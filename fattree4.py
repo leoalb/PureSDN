@@ -27,6 +27,9 @@ from mininet.util import dumpNodeConnections
 import logging
 import os
 
+K = 4
+CONTROLLER_IP ='192.168.56.104'
+CONTROLLER_PORT = 6653
 
 class Fattree(Topo):
 	"""
@@ -247,7 +250,45 @@ def pingTest(net):
 	"""
 	net.pingAll()
 
-def createTopo(pod, density, ip="192.168.56.104", port=6653, bw_c2a=10, bw_a2e=10, bw_e2h=10):
+def run_bootstrap(net):	
+	pingTest(net)
+	print("ADD ACTIONS AFTER BOOTSRAP")
+
+def run_node_failure(net):
+	print(f"running node_failure")
+	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h2'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h3'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_3'), allLinks = True)
+	print("deleted r3_0_0")
+
+def run_node_recovery(net):
+	print(f"running node_recovery")
+	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h2'))
+	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('p0_s0_h3'))
+	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'))
+	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_3'))
+	print("r3_0_0 up")
+
+def run_link_failure(net):
+	print(f"running link_failure")	
+	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'), allLinks = True)
+
+def run_link_recovery(net):	
+	print(f"running link_recovery")	
+	net.delLinkBetween (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'), allLinks = True)
+	net.addLink (net.getNodeByName('r3_0_0'), net.getNodeByName('r2_0_2'))
+
+def run_partitioned_fabric(net):
+	print(f"running partitioned_fabric")	
+	net.delLinkBetween (net.getNodeByName('r1_0'), net.getNodeByName('r2_0_2'), allLinks = True)
+
+def run_partitioned_fabric_plane(net):	
+	print(f"running partitioned_fabric_plane")	
+	net.delLinkBetween (net.getNodeByName('r1_0'), net.getNodeByName('r2_0_2'), allLinks = True)
+	net.delLinkBetween (net.getNodeByName('r1_1'), net.getNodeByName('r2_0_2'), allLinks = True)
+
+def createTopo(pod, density, ip=CONTROLLER_IP, port=CONTROLLER_PORT, bw_c2a=10, bw_a2e=10, bw_e2h=10):
 	"""
 		Create network topology and run the Mininet.
 	"""
@@ -274,6 +315,15 @@ def createTopo(pod, density, ip="192.168.56.104", port=6653, bw_c2a=10, bw_a2e=1
 	# dumpNodeConnections(net.hosts)
 	# pingTest(net)
 	# iperfTest(net, topo)
+	run_bootstrap(net)
+	#uncomments the tests you wanna run
+	#run_node_failure(net)
+	#run_node_recovery(net)
+	#run_link_failure(net)
+	#run_link_recovery(net)
+	#run_partitioned_fabric(net)
+	#run_partitioned_fabric_plane
+	
 
 	CLI(net)
 	net.stop()
