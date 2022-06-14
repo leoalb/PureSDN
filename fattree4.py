@@ -271,7 +271,8 @@ def run_node_failure(net):
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('h002'), allLinks = True)
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2002'), allLinks = True)
-	print("deleted node 3001")
+	print(f"deleted node 3001, waiting {K}s to reconverge")
+	sleep(K)
 	dropped_p = net.pingAll()
 	total = HOSTS*(HOSTS-1)
 	expected_d = total - 4*(HOSTS-1) #two hosts unreachable 
@@ -366,10 +367,10 @@ def createTopo(pod, density, ip=CONTROLLER_IP, port=CONTROLLER_PORT, bw_c2a=10, 
 	# dumpNodeConnections(net.hosts)
 	# pingTest(net)
 	# iperfTest(net, topo)
-	sleep(10)
-	run_bootstrap(net)
+	sleep(30)
+	#run_bootstrap(net)
 	#uncomments the tests you wanna run
-	#run_node_failure(net)
+	run_node_failure(net)
 	#run_node_recovery(net)
 	#run_link_failure(net)
 	#run_link_recovery(net)
