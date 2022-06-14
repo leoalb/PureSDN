@@ -272,12 +272,14 @@ def run_node_failure(net):
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2002'), allLinks = True)
 	print("deleted node 3001")
-	dropped = net.pingAll()
-	expected = HOSTS*(HOSTS-1) - 2*(HOSTS-1)
-	if (dropped == expected):  #calcular dropped
+	dropped_p = net.pingAll()
+	total = HOSTS*(HOSTS-1)
+	expected_d = total - 4*(HOSTS-1) #two hosts unreachable 
+	expected_p = expected_d/total
+	if (dropped_p == expected_p):
 		print("OK Node Failure")
 	else:
-		print("Node Failure: fails")
+		print(f"Node Failure: fails, {dropped_p} dropped vs {expected_p} expected")
 
 def run_node_recovery(net):
 	print(f"Running Node Recovery test...")
