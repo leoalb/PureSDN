@@ -275,8 +275,9 @@ def run_node_failure(net):
 	sleep(K)
 	dropped_p = net.pingAll()
 	total = HOSTS*(HOSTS-1)
-	expected_d = total - 4*(HOSTS-1) #two hosts unreachable 
-	expected_p = expected_d/total
+	expected_d = 4*(HOSTS-1) #two hosts unreachable 
+	bug_pingall = 2*(HOSTS-1) #2 hosts unreachable 
+	expected_p = expected_d/(total-bug_pingall)
 	if (dropped_p == expected_p):
 		print("OK Node Failure")
 	else:
@@ -378,7 +379,7 @@ def createTopo(pod, density, ip=CONTROLLER_IP, port=CONTROLLER_PORT, bw_c2a=10, 
 	#run_partitioned_fabric_plane
 	
 
-	CLI(net)
+	#CLI(net)
 	net.stop()
 
 if __name__ == '__main__':
