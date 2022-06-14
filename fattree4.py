@@ -275,10 +275,10 @@ def run_node_failure(net):
 	sleep(K)
 	dropped_p = net.pingAll()
 	total = HOSTS*(HOSTS-1)
-	expected_d = 4*(HOSTS-1) #two hosts unreachable 
-	bug_pingall = 2*(HOSTS-1) #2 hosts unreachable 
-	expected_p = expected_d/(total-bug_pingall)
-	if (dropped_p == expected_p):
+	expected_d = (K/2)*(HOSTS-1) + (K/2)*(HOSTS-1-(K/2)) #two hosts unreachable 
+	bug_pingall = (K/2)*(HOSTS-1) #2 hosts unreachable 
+	expected_p = (expected_d-bug_pingall+(K/2))/(total-bug_pingall)
+	if (int(dropped_p) == int(expected_p*100)):
 		print("OK Node Failure")
 	else:
 		print(f"Node Failure: fails, {dropped_p} dropped vs {expected_p} expected")
