@@ -259,7 +259,7 @@ def pingAllTest(net):
 
 def run_bootstrap(net):
 	print("Running bootstrap...")	
-	dropped = pingAllTest(net)
+	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK BOOTSTRAP")
 	else:
@@ -272,7 +272,7 @@ def run_node_failure(net):
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2002'), allLinks = True)
 	print("deleted node 3001")
-	dropped = pingAllTest(net)
+	dropped = net.pingAll()
 	expected = HOSTS*(HOSTS-1) - 2*(HOSTS-1)
 	if (dropped == expected):  #calcular dropped
 		print("OK Node Failure")
@@ -286,7 +286,7 @@ def run_node_recovery(net):
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2002'))
 	print("node 3001 up")
-	dropped = pingAllTest(net)
+	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Node Recovery")
 	else:
@@ -296,7 +296,7 @@ def run_link_failure(net):
 	print(f"Running Link Failure test...")	
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 	print("link 3001 <-> 2001 down")
-	dropped = pingAllTest(net)
+	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Link Failure")
 	else:
@@ -309,7 +309,7 @@ def run_link_recovery(net):
 	sleep(3)
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
 	print("link 3001 <-> 2001 up")
-	dropped = pingAllTest(net)
+	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Link Recovery")
 	else:
@@ -319,7 +319,7 @@ def run_partitioned_fabric(net):
 	print(f"Running Partitioned Fabric")	
 	net.delLinkBetween (net.getNodeByName('1001'), net.getNodeByName('2001'), allLinks = True)
 	print("link 1001 <-> 2001 down")
-	dropped = pingAllTest(net)
+	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Partitioned Fabric")
 	else:
@@ -331,7 +331,7 @@ def run_partitioned_fabric_plane(net):
 	print("link 1001 <-> 2001 down")
 	net.delLinkBetween (net.getNodeByName('1002'), net.getNodeByName('2001'), allLinks = True)
 	print("link 1002 <-> 2001 down")
-	dropped = pingAllTest(net)
+	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Partitioned Fabric Plane")
 	else:
