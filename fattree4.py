@@ -24,6 +24,7 @@ from mininet.link import Link, Intf, TCLink
 from mininet.topo import Topo
 from mininet.util import dumpNodeConnections
 from time import sleep
+import re
 
 import logging
 import os
@@ -31,6 +32,7 @@ import os
 K = 4
 CONTROLLER_IP ='192.168.56.104'
 CONTROLLER_PORT = 6653
+HOSTS = K**3/4
 
 class Fattree(Topo):
 	"""
@@ -245,49 +247,95 @@ def iperfTest(net, topo):
 	h016.cmdPrint('iperf -c ' + h001.IP() + ' -u -t 10 -i 1 -b 10m')
 	h016.cmdPrint('iperf -c ' + h015.IP() + ' -u -t 10 -i 1 -b 10m')
 
-def pingTest(net):
-	"""
-		Start ping test.
-	"""
-	net.pingAll()
+def pingAllTest(net):
+	output = net.pingAll()
+	r = r'Results: (\d+)'
+	m = re.search(r, output)
+	if m is None:
+		print("Error: could not parse ping output: %s\n")
+		return -1
+	dropped = float(m.group(1))
+	return dropped
 
-def run_bootstrap(net):	
-	pingTest(net)
-	print("ADD ACTIONS AFTER BOOTSRAP")
+def run_bootstrap(net):
+	print("Running bootstrap...")	
+	dropped = pingAllTest(net)
+	if (dropped == 0):
+		print("OK BOOTSTRAP")
+	else:
+		print("NOT FULL CONNECTIVITY AT BOOTSTRAP")
 
 def run_node_failure(net):
-	print(f"running node_failure")
+	print(f"Running Node Failure test...")
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('h001'), allLinks = True)
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('h002'), allLinks = True)
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2002'), allLinks = True)
-	print("deleted 3001")
+	print("deleted node 3001")
+	dropped = pingAllTest(net)
+	expected = HOSTS*(HOSTS-1) - 2*(HOSTS-1)
+	if (dropped == expected):  #calcular dropped
+		print("OK Node Failure")
+	else:
+		print("Node Failure: fails")
 
 def run_node_recovery(net):
-	print(f"running node_recovery")
+	print(f"Running Node Recovery test...")
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('h001'))
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('h002'))
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2002'))
-	print("3001 up")
+	print("node 3001 up")
+	dropped = pingAllTest(net)
+	if (dropped == 0):
+		print("OK Node Recovery")
+	else:
+		print("Node Recovery: fails")
 
 def run_link_failure(net):
-	print(f"running link_failure")	
+	print(f"Running Link Failure test...")	
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
+	print("link 3001 <-> 2001 down")
+	dropped = pingAllTest(net)
+	if (dropped == 0):
+		print("OK Link Failure")
+	else:
+		print("Link Failure: fails")
 
 def run_link_recovery(net):	
-	print(f"running link_recovery")	
+	print(f"Running Link Recovery")	
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
+	print("link 3001 <-> 2001 down")
+	sleep(3)
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
+	print("link 3001 <-> 2001 up")
+	dropped = pingAllTest(net)
+	if (dropped == 0):
+		print("OK Link Recovery")
+	else:
+		print("Link Recovery: fails")
 
 def run_partitioned_fabric(net):
-	print(f"running partitioned_fabric")	
+	print(f"Running Partitioned Fabric")	
 	net.delLinkBetween (net.getNodeByName('1001'), net.getNodeByName('2001'), allLinks = True)
+	print("link 1001 <-> 2001 down")
+	dropped = pingAllTest(net)
+	if (dropped == 0):
+		print("OK Partitioned Fabric")
+	else:
+		print("Partitioned Fabric: fails")
 
 def run_partitioned_fabric_plane(net):	
-	print(f"running partitioned_fabric_plane")	
+	print(f"Running Partitioned Fabric Plane")	
 	net.delLinkBetween (net.getNodeByName('1001'), net.getNodeByName('2001'), allLinks = True)
+	print("link 1001 <-> 2001 down")
 	net.delLinkBetween (net.getNodeByName('1002'), net.getNodeByName('2001'), allLinks = True)
+	print("link 1002 <-> 2001 down")
+	dropped = pingAllTest(net)
+	if (dropped == 0):
+		print("OK Partitioned Fabric Plane")
+	else:
+		print("Partitioned Fabric Plane: fails")
 
 def createTopo(pod, density, ip=CONTROLLER_IP, port=CONTROLLER_PORT, bw_c2a=10, bw_a2e=10, bw_e2h=10):
 	"""
