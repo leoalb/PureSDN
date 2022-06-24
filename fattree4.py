@@ -290,6 +290,7 @@ def run_node_recovery(net):
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2002'))
 	print("node 3001 up")
+	sleep(K)
 	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Node Recovery")
@@ -300,6 +301,7 @@ def run_link_failure(net):
 	print(f"Running Link Failure test...")	
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 	print("link 3001 <-> 2001 down")
+	sleep(K)
 	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Link Failure")
@@ -310,7 +312,7 @@ def run_link_recovery(net):
 	print(f"Running Link Recovery")	
 	net.delLinkBetween (net.getNodeByName('3001'), net.getNodeByName('2001'), allLinks = True)
 	print("link 3001 <-> 2001 down")
-	sleep(3)
+	sleep(K)
 	net.addLink (net.getNodeByName('3001'), net.getNodeByName('2001'))
 	print("link 3001 <-> 2001 up")
 	dropped = net.pingAll()
@@ -323,6 +325,7 @@ def run_partitioned_fabric(net):
 	print(f"Running Partitioned Fabric")	
 	net.delLinkBetween (net.getNodeByName('1001'), net.getNodeByName('2001'), allLinks = True)
 	print("link 1001 <-> 2001 down")
+	sleep(K)
 	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Partitioned Fabric")
@@ -333,8 +336,10 @@ def run_partitioned_fabric_plane(net):
 	print(f"Running Partitioned Fabric Plane")	
 	net.delLinkBetween (net.getNodeByName('1001'), net.getNodeByName('2001'), allLinks = True)
 	print("link 1001 <-> 2001 down")
+	sleep(K)
 	net.delLinkBetween (net.getNodeByName('1002'), net.getNodeByName('2001'), allLinks = True)
 	print("link 1002 <-> 2001 down")
+	sleep(K)
 	dropped = net.pingAll()
 	if (dropped == 0):
 		print("OK Partitioned Fabric Plane")
@@ -371,9 +376,9 @@ def createTopo(pod, density, ip=CONTROLLER_IP, port=CONTROLLER_PORT, bw_c2a=10, 
 	sleep(30)
 	#run_bootstrap(net)
 	#uncomments the tests you wanna run
-	run_node_failure(net)
+	#run_node_failure(net)
 	#run_node_recovery(net)
-	#run_link_failure(net)
+	run_link_failure(net)
 	#run_link_recovery(net)
 	#run_partitioned_fabric(net)
 	#run_partitioned_fabric_plane

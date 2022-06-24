@@ -150,6 +150,37 @@ class NetworkAwareness(app_manager.RyuApp):
 			Note: In looped network, we should get the topology
 			20 or 30 seconds after the network went up.
 		"""
+		print(f"GET TOPO::: {ev.__class__.__name__}")
+
+		if ev.__class__ == event.EventPortDelete:
+			port = ev.port
+			print('A port was deleted... %s', port)
+			self.logger.info("[GET NETWORK TOPOLOGY DELETEDDDD]")
+			switch_list = get_switch(self.topology_api_app, None)
+			self.create_port_map(switch_list)
+			self.switches = [sw.dp.id for sw in switch_list]
+			links = get_link(self.topology_api_app, None)
+			print(f"LINKS:::::: {len(links)}")
+			self.create_interior_links(links)
+			self.create_access_ports()
+			self.graph = self.get_graph(self.link_to_port.keys())
+			self.shortest_paths = self.all_k_shortest_paths(
+				self.graph, weight='weight', k=CONF.k_paths)
+
+		if  ev.__class__ == event.EventLinkDelete:
+			print('A link was deleted... ')
+			self.logger.info("[GET NETWORK TOPOLOGY DELETEDDDD]")
+			switch_list = get_switch(self.topology_api_app, None)
+			self.create_port_map(switch_list)
+			self.switches = [sw.dp.id for sw in switch_list]
+			links = get_link(self.topology_api_app, None)
+			print(f"LINKS:::::: {len(links)}")
+			self.create_interior_links(links)
+			self.create_access_ports()
+			self.graph = self.get_graph(self.link_to_port.keys())
+			self.shortest_paths = self.all_k_shortest_paths(
+				self.graph, weight='weight', k=CONF.k_paths)
+
 		present_time = time.time()
 		if present_time - self.start_time < self.initiation_delay:
 			return
@@ -189,6 +220,7 @@ class NetworkAwareness(app_manager.RyuApp):
 					_graph.add_edge(src, dst, weight=1)
 				else:
 					pass
+					#_graph.add_edge(src, dst, weight=100)
 		return _graph
 
 	def get_initiation_delay(self, fanout):
